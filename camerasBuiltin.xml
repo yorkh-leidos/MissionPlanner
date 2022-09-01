@@ -9,6 +9,14 @@
     <senw>6.16</senw>
   </Camera>
   <Camera>
+    <name>Nikon D5000</name>
+    <flen>40</flen>
+    <imgh>2848</imgh>
+    <imgw>4288</imgw>
+    <senh>15.8</senh>
+    <senw>23.6</senw>
+  </Camera>
+  <Camera>
     <name>Canon SX230 HS</name>
     <flen>5</flen>
     <imgh>3000</imgh>
