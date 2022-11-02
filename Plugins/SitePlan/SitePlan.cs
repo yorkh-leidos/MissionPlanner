@@ -144,14 +144,6 @@ namespace MissionPlanner
                         horizOffset = distance * Math.Cos(camPitch * deg2rad) - ((initialAltitude + ((lane - toepoint_runs) * vertIncrement)) / Math.Tan(angle * deg2rad)) - bench * (bermDepth + height / Math.Tan(angle * deg2rad));
                     }
 
-                    // THIS IS COMMENTED OUT BECAUSE IT'S INSANE NONSENSE THAT SHOULD NEVER HAVE BEEN IN HERE.
-                    //
-                    //    //convert to absolute if flight planner is set to absolute mode (shift up by home alt)
-                    //    if (altmode == FlightPlanner.altmode.Absolute)
-                    //    {
-                    //        vertOffset += homeAlt;
-                    //    }
-
                     //if this is the first lane of a bench, climb to the altitude of the first waypoint of the lane before moving to the waypoint 
                     if (lane == 0 && ans.Count > 0)
                     {

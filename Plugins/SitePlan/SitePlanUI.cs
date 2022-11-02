@@ -53,6 +53,7 @@ namespace MissionPlanner
         double viewheight = 0;
 
         decimal camVerticalSpacing = 0;
+        decimal camHorizontalSpacing = 0;
 
         internal PointLatLng MouseDownStart = new PointLatLng();
         internal PointLatLng MouseDownEnd;
@@ -608,6 +609,12 @@ namespace MissionPlanner
             double maxgroundelevation = double.MinValue;
             double mingroundelevation = double.MaxValue;
             double startalt = plugin.Host.cs.HomeAlt;
+            double sidelap = (double)num_sidelap.Value;
+
+            double distanceFromFace = CurrentState.fromDistDisplayUnit((double)NUM_Distance.Value);
+            GetFOV(distanceFromFace, ref viewwidth, ref viewheight);
+
+            double max_length = viewwidth * (double)(1-(sidelap / 100.0f));
 
             if (loading)
                 return;
@@ -632,7 +639,7 @@ namespace MissionPlanner
             grid = SitePlan.CreateCorridor(list, CurrentState.fromDistDisplayUnit((double)NUM_BenchHeight.Value), (double)viewheight,
                      (double)camVerticalSpacing, (double)NUM_Distance.Value, (double)NUM_angle.Value, (double)NUM_cameraPitch.Value,
                      CHK_facedirection.Checked, (double)NUM_BermDepth.Value, (int)NUM_Benches.Value, (double)NUM_toeHeight.Value, (double)NUM_toepoint.Value, (double)NUM_toepoint_runs.Value,
-                     CHK_FollowPathHome.Checked, startalt, (double)NUM_maxlength.Value, (FlightPlanner.altmode)plugin.Host.MainForm.FlightPlanner.CMB_altmode.SelectedValue);
+                     CHK_FollowPathHome.Checked, startalt, max_length/*(double)NUM_maxlength.Value*/, (FlightPlanner.altmode)plugin.Host.MainForm.FlightPlanner.CMB_altmode.SelectedValue);
 
             if (grid.Count == 0)
                 return;
@@ -1473,7 +1480,6 @@ namespace MissionPlanner
                             }
 
                             // points that do not trigger the camera
-
                             if (plla.Lat != lastplla.Lat || plla.Lng != lastplla.Lng ||
                                 plla.Alt != lastplla.Alt)
                             {
@@ -1505,6 +1511,7 @@ namespace MissionPlanner
                             }
 
                             // check trigger method
+                            /*
                             if (rad_trigdist.Checked)
                             {
                                 // if stopstart enabled, add wp and trigger start/stop
@@ -1515,14 +1522,14 @@ namespace MissionPlanner
                                         //  s > sm, need to dup check
                                         if (plla.Lat != lastplla.Lat || plla.Lng != lastplla.Lng || plla.Alt != lastplla.Alt)
                                             AddWP(plla.Lng, plla.Lat, plla.Alt, faceHeading, image_after_yaw: CHK_extraimages.Checked);
-
+                            
                                         plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_SET_CAM_TRIGG_DIST, (float)NUM_spacing.Value, 0, 0, 0, 0, 0, 0, gridobject);
                                         startedtrigdist = true;
                                     }
                                     else if (plla.Tag == "ME")
                                     {
                                         AddWP(plla.Lng, plla.Lat, plla.Alt, faceHeading, (double)NUM_copter_delay.Value, image_before_yaw: CHK_extraimages.Checked, image_after_yaw: CHK_extraimages.Checked);
-
+                            
                                         plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_SET_CAM_TRIGG_DIST, 0, 0, 0, 0, 0, 0, 0, gridobject);
                                         startedtrigdist = false;
                                     }
@@ -1550,7 +1557,7 @@ namespace MissionPlanner
                                         if (plla.Lat != lastplla.Lat || plla.Lng != lastplla.Lng ||
                                             plla.Alt != lastplla.Alt)
                                             AddWP(plla.Lng, plla.Lat, plla.Alt, faceHeading);
-
+                            
                                         plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_REPEAT_SERVO,
                                             (float)NUM_reptservo.Value,
                                             (float)num_reptpwm.Value, 999, (float)NUM_repttime.Value, 0, 0, 0,
@@ -1559,7 +1566,7 @@ namespace MissionPlanner
                                     else if (plla.Tag == "ME")
                                     {
                                         AddWP(plla.Lng, plla.Lat, plla.Alt, faceHeading, (double)NUM_copter_delay.Value);
-
+                            
                                         plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_REPEAT_SERVO,
                                             (float)NUM_reptservo.Value,
                                             (float)num_reptpwm.Value, 0, (float)NUM_repttime.Value, 0, 0, 0,
@@ -1574,7 +1581,7 @@ namespace MissionPlanner
                                     if (plla.Lat != lastplla.Lat || plla.Lng != lastplla.Lng ||
                                         plla.Alt != lastplla.Alt)
                                         AddWP(plla.Lng, plla.Lat, plla.Alt, faceHeading);
-
+                            
                                     plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_SET_SERVO,
                                         (float)num_setservono.Value,
                                         (float)num_setservolow.Value, 0, 0, 0, 0, 0,
@@ -1583,13 +1590,14 @@ namespace MissionPlanner
                                 else if (plla.Tag == "ME")
                                 {
                                     AddWP(plla.Lng, plla.Lat, plla.Alt, faceHeading, (double)NUM_copter_delay.Value);
-
+                            
                                     plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_SET_SERVO,
                                         (float)num_setservono.Value,
                                         (float)num_setservohigh.Value, 0, 0, 0, 0, 0,
                                         gridobject);
                                 }
                             }
+                            */
                         }
                         else
                         {
@@ -1600,11 +1608,11 @@ namespace MissionPlanner
                     }
 
                     // end
-                    if (rad_trigdist.Checked && startedtrigdist)
-                    {
-                        plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_SET_CAM_TRIGG_DIST, 0, 0, 0, 0, 0, 0, 0, gridobject);
-                        startedtrigdist = false;
-                    }
+                    //if (rad_trigdist.Checked && startedtrigdist)
+                    //{
+                    //    plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_SET_CAM_TRIGG_DIST, 0, 0, 0, 0, 0, 0, 0, gridobject);
+                    //    startedtrigdist = false;
+                    //}
                     // If we're just arrived at the last waypoint, snap one more pic.
                     if (!CHK_FollowPathHome.Checked && CHK_extraimages.Checked)
                     {
@@ -1777,6 +1785,7 @@ namespace MissionPlanner
             //precalculate useful variables
             var tanAngle = Math.Tan((double)NUM_angle.Value * deg2rad);
             var vertIncrement = (double)camVerticalSpacing * Math.Sin((double)NUM_angle.Value * deg2rad);
+            var horzIncrement = (double)camHorizontalSpacing * Math.Cos((double)NUM_angle.Value * deg2rad);
 
             //calculate vert/horiz scaling factors
             double CopterDistX = (double)NUM_Distance.Value * Math.Cos((double)NUM_cameraPitch.Value * deg2rad);
