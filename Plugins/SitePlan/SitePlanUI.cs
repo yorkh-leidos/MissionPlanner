@@ -87,6 +87,7 @@ namespace MissionPlanner
             public bool facedirection;
             public decimal speed;
             public bool usespeed;
+            public bool wppicture;
             public bool autotakeoff;
             public bool autotakeoff_RTL;
             public bool gndcollect;
@@ -257,6 +258,7 @@ namespace MissionPlanner
             NUM_angle.Value = siteplandata.angle;
             CHK_facedirection.Checked = siteplandata.facedirection;
             CHK_usespeed.Checked = siteplandata.usespeed;
+            CHK_wppicture.Checked = siteplandata.wppicture;
             NUM_UpDownFlySpeed.Value = siteplandata.speed;
             CHK_toandland.Checked = siteplandata.autotakeoff;
             CHK_toandland_RTL.Checked = siteplandata.autotakeoff_RTL;
@@ -311,6 +313,7 @@ namespace MissionPlanner
             siteplandata.facedirection = CHK_facedirection.Checked;
             siteplandata.speed = NUM_UpDownFlySpeed.Value;
             siteplandata.usespeed = CHK_usespeed.Checked;
+            siteplandata.wppicture = CHK_wppicture.Checked;
             siteplandata.autotakeoff = CHK_toandland.Checked;
             siteplandata.autotakeoff_RTL = CHK_toandland_RTL.Checked;
             siteplandata.splitmission = NUM_split.Value;
@@ -318,7 +321,7 @@ namespace MissionPlanner
             siteplandata.sidelap = num_sidelap.Value;
             siteplandata.pictures_per_waypoint = num_picture_per_waypoint.Value;
             siteplandata.picture_overlap_angle = num_picture_overlap_angle.Value;
-            siteplandata.maxlength = NUM_maxlength.Value;
+            
 
             siteplandata.bermdepth = NUM_BermDepth.Value;
             siteplandata.numbenches = NUM_Benches.Value;
@@ -373,9 +376,9 @@ namespace MissionPlanner
                 LoadSetting("siteplan_sidelap", num_sidelap);
                 LoadSetting("siteplan_pictures_per_waypoint", num_picture_per_waypoint);
                 LoadSetting("siteplan_picture_overlap_angle", num_picture_overlap_angle);
-                LoadSetting("siteplan_maxlength", NUM_maxlength);
                 LoadSetting("siteplan_distance", NUM_Distance);
                 LoadSetting("siteplan_usespeed", CHK_usespeed);
+                LoadSetting("siteplan_wppicture", CHK_wppicture);
                 LoadSetting("siteplan_speed", NUM_UpDownFlySpeed);
                              
                 LoadSetting("siteplan_height_test", NUM_toepoint);
@@ -444,13 +447,13 @@ namespace MissionPlanner
             plugin.Host.config["siteplan_extraimages"] = CHK_extraimages.Checked.ToString();
 
             plugin.Host.config["siteplan_usespeed"] = CHK_usespeed.Checked.ToString();
+            plugin.Host.config["siteplan_wppicture"] = CHK_wppicture.Checked.ToString();
             plugin.Host.config["siteplan_speed"] = NUM_UpDownFlySpeed.Value.ToString();
             plugin.Host.config["siteplan_distance"] = NUM_Distance.Value.ToString();
             plugin.Host.config["siteplan_overlap"] = num_overlap.Value.ToString();
             plugin.Host.config["siteplan_sidelap"] = num_sidelap.Value.ToString();
             plugin.Host.config["siteplan_pictures_per_waypoint"] = num_picture_per_waypoint.Value.ToString();
             plugin.Host.config["siteplan_picture_overlap_angle"] = num_picture_overlap_angle.Value.ToString();
-            plugin.Host.config["siteplan_maxlength"] = NUM_maxlength.Value.ToString();
 
             plugin.Host.config["siteplan_height_test"] = NUM_toepoint.Value.ToString();
             plugin.Host.config["siteplan_toepoint_runs"] = NUM_toepoint_runs.Value.ToString();
@@ -827,28 +830,12 @@ namespace MissionPlanner
 
             plugin.Host.AddWPtoList(MAVLink.MAV_CMD.WAYPOINT, max_delay, 0, 0, 0, Lng, Lat, Alt * CurrentState.multiplierdist, gridobject);
 
-            plugin.Host.AddWPtoList(MAVLink.MAV_CMD.CONDITION_YAW, bearing - 15, 0, 0, 0, 0, 0, 0, gridobject);
-            plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_DIGICAM_CONTROL, 0, 0, 0, 0, 0, 1, 0, gridobject);
-            plugin.Host.AddWPtoList(MAVLink.MAV_CMD.CONDITION_YAW, bearing, 0, 0, 0, 0, 0, 0, gridobject);
-            plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_DIGICAM_CONTROL, 0, 0, 0, 0, 0, 1, 0, gridobject);
-            plugin.Host.AddWPtoList(MAVLink.MAV_CMD.CONDITION_YAW, bearing + 15, 0, 0, 0, 0, 0, 0, gridobject);
-            plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_DIGICAM_CONTROL, 0, 0, 0, 0, 0, 1, 0, gridobject);
-            plugin.Host.AddWPtoList(MAVLink.MAV_CMD.CONDITION_YAW, bearing, 0, 0, 0, 0, 0, 0, gridobject);
-
-        }
-
-        private void WaypointCapture(double bearing, int num_pictures, double overlap_angle, object gridobject = null)
-        {
-            for(int i = 0; i < num_pictures; i++)
+            if (CHK_wppicture.Checked)
             {
                 plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_DIGICAM_CONTROL, 0, 0, 0, 0, 0, 1, 0, gridobject);
-                if (bearing != -1)
-                {
-                    plugin.Host.AddWPtoList(MAVLink.MAV_CMD.CONDITION_YAW, bearing, 0, 0, 0, 0, 0, 0, gridobject);
-                }
             }
-
         }
+
 
         string SecondsToNice(double seconds)
         {
@@ -1511,7 +1498,7 @@ namespace MissionPlanner
                             }
 
                             // check trigger method
-                            /*
+                            
                             if (rad_trigdist.Checked)
                             {
                                 // if stopstart enabled, add wp and trigger start/stop
@@ -1597,7 +1584,7 @@ namespace MissionPlanner
                                         gridobject);
                                 }
                             }
-                            */
+                            
                         }
                         else
                         {
@@ -1608,12 +1595,13 @@ namespace MissionPlanner
                     }
 
                     // end
-                    //if (rad_trigdist.Checked && startedtrigdist)
-                    //{
-                    //    plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_SET_CAM_TRIGG_DIST, 0, 0, 0, 0, 0, 0, 0, gridobject);
-                    //    startedtrigdist = false;
-                    //}
-                    // If we're just arrived at the last waypoint, snap one more pic.
+                    if (rad_trigdist.Checked && startedtrigdist)
+                    {
+                        plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_SET_CAM_TRIGG_DIST, 0, 0, 0, 0, 0, 0, 0, gridobject);
+                        startedtrigdist = false;
+                    }
+
+                    //If we're just arrived at the last waypoint, snap one more pic.
                     if (!CHK_FollowPathHome.Checked && CHK_extraimages.Checked)
                     {
                         plugin.Host.AddWPtoList(MAVLink.MAV_CMD.DO_DIGICAM_CONTROL, 0, 0, 0, 0, 0, 1, 0, gridobject);

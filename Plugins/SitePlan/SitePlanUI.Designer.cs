@@ -160,6 +160,7 @@
             this.TRK_zoom = new MissionPlanner.Controls.MyTrackBar();
             this.map = new MissionPlanner.Controls.myGMAP();
             this.label49 = new System.Windows.Forms.Label();
+            this.CHK_wppicture = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -788,6 +789,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.CHK_wppicture);
             this.groupBox1.Controls.Add(this.label48);
             this.groupBox1.Controls.Add(this.NUM_maxlength);
             this.groupBox1.Controls.Add(this.num_picture_per_waypoint);
@@ -1423,6 +1425,14 @@
             resources.ApplyResources(this.label49, "label49");
             this.label49.Name = "label49";
             // 
+            // CHK_wppicture
+            // 
+            resources.ApplyResources(this.CHK_wppicture, "CHK_wppicture");
+            this.CHK_wppicture.Checked = true;
+            this.CHK_wppicture.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CHK_wppicture.Name = "CHK_wppicture";
+            this.CHK_wppicture.UseVisualStyleBackColor = true;
+            // 
             // SitePlanUI
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1621,5 +1631,6 @@
         private System.Windows.Forms.Label label48;
         private System.Windows.Forms.NumericUpDown NUM_maxlength;
         private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.CheckBox CHK_wppicture;
     }
 }
